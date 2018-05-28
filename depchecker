@@ -34,9 +34,15 @@ r="$(which rm)"
 
 
 #Check for Debian or Ubuntu
-if [[ $(lsb_release -si) == "Debian" ]]
+if [[ $(lsb_release -si) == "Debian"  || $(lsb_release -si) == "Ubuntu" ]]
 then
 #command aggregator
+	
+	if [[ ! dpkg -l $1 ]]
+	then
+		echo "Package not installed"
+		exit 1
+	fi
 	if [[ ! $(which apt-file 2>/dev/null) ]]; #apt-file command is required for this script
 	then
 		echo "Please install apt-file"
@@ -55,9 +61,14 @@ fi
 
 
 #check for CentOS or RHEL
-if [[ $(lsb_release -si) == "CentOS" ]]
+if [[ $(lsb_release -si) == "CentOS" || $(lsb_release -si) == "RedHatEnterpriseServer" ]]
 then
 	x=`rpm -ql $1`
+	if [[ $? != 0 ]]
+	then
+		echo "Package not installed"
+		exit 1
+	fi
 	FLAG=2
 fi
 
